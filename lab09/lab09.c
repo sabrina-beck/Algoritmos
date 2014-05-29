@@ -1,6 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
-/* FIXME tirar */
 
 #define CADASTRO 'c'
 #define BUSCA 'b'
@@ -32,7 +30,6 @@ void escrever();
 
 char nomeArquivo[TAM_NOME_ARQUIVO];
 int n;
-Aluno *alunos; /* FIXME tirar isso */
 int alunoProcurado;
 char tipoEntrada; /* FIXME verificar se deve mesmo ser global */
 
@@ -40,7 +37,6 @@ char tipoEntrada; /* FIXME verificar se deve mesmo ser global */
 int main() {
 	ler();
 	escrever();
-/*	free(alunos);*/ /* FIXME tirar isso */
 	return 0;
 }
 
@@ -94,7 +90,13 @@ void ler() {
 		lerBusca();
 }
 
-
+void escreverAluno(Aluno aluno) {
+		printf("Nome: %s\n", aluno.nome);
+		printf("RA: %d\n", aluno.ra);
+		printf("Genero: %c\n", aluno.genero);
+		printf("Data Nascimento: %hu/%hu/%hu\n", aluno.nascimento.dia, aluno.nascimento.mes, aluno.nascimento.ano);
+		printf("Genero que procura: %c\n\n", aluno.generoQueProcura);
+}
 
 void escreverCadastro() { /* FIXME tirar isso */
 	FILE* baseDeDados = fopen(nomeArquivo, "rb");
@@ -103,17 +105,17 @@ void escreverCadastro() { /* FIXME tirar isso */
 	for(i = 0; i < n; i++) {
 		Aluno aluno;
 		fread(&aluno, sizeof(Aluno), 1, baseDeDados);		
-		printf("Nome: %s\n", aluno.nome);
-		printf("RA: %d\n", aluno.ra);
-		printf("Genero: %c\n", aluno.genero);
-		printf("Data Nascimento: %hu/%hu/%hu\n", aluno.nascimento.dia, aluno.nascimento.mes, aluno.nascimento.ano);
-		printf("Genero que procura: %c\n\n", aluno.generoQueProcura);
+		escreverAluno(aluno);
 	}
 	fclose(baseDeDados);
 }
 
-void escreverBusca() { /* FIXME tirar isso */
-	printf("Arquivo: %s\naluno procurado: %d", nomeArquivo, alunoProcurado);
+void escreverBusca() { /* FIXME adaptar para a criptografia */
+	FILE* baseDeDados = fopen(nomeArquivo, "rb");
+	Aluno aluno;
+	fseek(baseDeDados, (alunoProcurado - 1) * sizeof(Aluno), SEEK_SET);
+	fread(&aluno, sizeof(Aluno), 1, baseDeDados);
+	escreverAluno(aluno);
 }
 
 void escrever() { /* FIXME tirar isso */

@@ -1,10 +1,12 @@
 #include <stdio.h>
+#include <string.h>
 
 #define CADASTRO 'c'
 #define BUSCA 'b'
 #define TAM_NOME_ALUNO 72
 #define TAM_NOME_ARQUIVO 100
 #define DIMENSAO 2
+#define TAM_RA 7
 
 struct Data {
 	unsigned short int dia;
@@ -17,7 +19,7 @@ typedef struct Data Data;
 struct Aluno {
 	char nome[TAM_NOME_ALUNO];
 	char genero;
-	int ra;
+	char ra[TAM_RA];
 	Data nascimento;
 	char generoQueProcura;
 };
@@ -29,6 +31,7 @@ void lerCadastro();
 void lerBusca();
 void escrever();
 void gerarChave(Aluno aluno, int chave[2][2]);
+void criptografar(char string[], int chave[DIMENSAO][DIMENSAO]);
 
 char nomeArquivo[TAM_NOME_ARQUIVO];
 int n;
@@ -37,18 +40,8 @@ char tipoEntrada; /* FIXME verificar se deve mesmo ser global */
 
 
 int main() {
-/*	ler();
-	escrever();*/
-
-	int i, j;
-	int chave[2][2];
-
-
-	for(i = 0; i < 2; i++){
-		for(j = 0; j < 2; j++)
-			printf("%d ", chave[i][j]);
-		printf("\n");
-	}
+	ler();
+/*	escrever();*/ /* FIXME tirar isso */
 
 	return 0;
 }
@@ -63,7 +56,7 @@ void lerData(Data *data) {
 
 void lerAluno(Aluno *aluno) {
 	scanf("%[^\n]s", aluno->nome);
-	scanf("%d ", &aluno->ra);
+	scanf("%s ", aluno->ra);
 	scanf(" %c ", &aluno->genero);
 	lerData(&aluno->nascimento);
 	scanf(" %c ", &aluno->generoQueProcura);
@@ -75,7 +68,13 @@ void cadastrarAlunos() {
 
 	for(i = 0; i < n; i++) {
 		Aluno aluno;
+		int chave[DIMENSAO][DIMENSAO];
 		lerAluno(&aluno);
+		gerarChave(aluno, chave);
+		criptografar(aluno.nome, chave);
+		criptografar(aluno.ra, chave);
+		printf("%s\n", aluno.nome);
+		printf("%s\n", aluno.ra);
 		fwrite(&aluno, sizeof(Aluno), 1, baseDeDados);
 	}
 
@@ -109,7 +108,7 @@ void escreverData(Data data) {
 
 void escreverAluno(Aluno aluno) {
 		printf("Nome: %s\n", aluno.nome);
-		printf("RA: %d\n", aluno.ra);
+		printf("RA: %s\n", aluno.ra);
 		printf("Genero: %c\n", aluno.genero);
 		escreverData(aluno.nascimento);
 		printf("Genero que procura: %c\n\n", aluno.generoQueProcura);
@@ -157,19 +156,27 @@ void multiplicar(int matriz[DIMENSAO][DIMENSAO], char vet[], char resultado[]) {
 void adequarAoAlfabeto(char resultado[], int tam){
 	int i;
 	for(i = 0; i < tam; i++)
-		resultado[i] %= 26;
+		resultado[i] %= 127;
+}
+
+void hill(char c1, char c2, char resultado[], int chave[DIMENSAO][DIMENSAO]) {
+	char par[DIMENSAO];
+	par[0] = c1;
+	par[1] = c2;
+	multiplicar(chave, par, resultado);
+	adequarAoAlfabeto(resultado, DIMENSAO);
 }
 
 void criptografar(char string[], int chave[DIMENSAO][DIMENSAO]) {
 	int i;
+	char resultado[2];
 	for(i = 0; string[i] && string[i + 1]; i += 2) {
-		char par[DIMENSAO];
-		char resultado[DIMENSAO];
-		par[0] = string[i];
-		par[1] = string[i + 1];
-		multiplicar(chave, par, resultado);
-		adequarAoAlfabeto(resultado, DIMENSAO);
+		hill(string[i], string[i + 1], resultado, chave);
+		string[i] = resultado[0];
+		string[i + 1] = resultado[1];
 	}
-	/* TODO quando o tamanho da string é impar */
 
+	if(string[i] && !string[i + 1]){
+		hill(string[i], ' ', resultado, chave);
+	}
 }

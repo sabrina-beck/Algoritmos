@@ -97,18 +97,19 @@ void ler() {
 
 
 void escreverCadastro() { /* FIXME tirar isso */
+	FILE* baseDeDados = fopen(nomeArquivo, "rb");
 	int i;
-	printf("Arquivo: %s\n", nomeArquivo);
-	printf("Qtd alunos: %d\n", n);
-	printf("Alunos\n-----------------------\n");
 
 	for(i = 0; i < n; i++) {
-		printf("Nome: %s\n", alunos[i].nome);
-		printf("RA: %d\n", alunos[i].ra);
-		printf("Genero: %c\n", alunos[i].genero);
-		printf("Data Nascimento: %hu/%hu/%hu\n", alunos[i].nascimento.dia, alunos[i].nascimento.mes, alunos[i].nascimento.ano);
-		printf("Genero que procura: %c\n\n", alunos[i].generoQueProcura);
+		Aluno aluno;
+		fread(&aluno, sizeof(Aluno), 1, baseDeDados);		
+		printf("Nome: %s\n", aluno.nome);
+		printf("RA: %d\n", aluno.ra);
+		printf("Genero: %c\n", aluno.genero);
+		printf("Data Nascimento: %hu/%hu/%hu\n", aluno.nascimento.dia, aluno.nascimento.mes, aluno.nascimento.ano);
+		printf("Genero que procura: %c\n\n", aluno.generoQueProcura);
 	}
+	fclose(baseDeDados);
 }
 
 void escreverBusca() { /* FIXME tirar isso */

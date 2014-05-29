@@ -142,10 +142,14 @@ void escrever() { /* FIXME tirar isso */
 }
 
 void gerarChave(Aluno aluno, int chave[DIMENSAO][DIMENSAO]) {
-	chave[0][0] = (aluno.nascimento.ano / 1000) * ((aluno.nascimento.ano % 1000) / 100);
+	chave[0][0] = aluno.nascimento.ano /100;
+	chave[0][1] = aluno.nascimento.mes;
+	chave[1][0] = aluno.nascimento.dia;
+	chave[1][1] = aluno.nascimento.ano % 100;
+/*	chave[0][0] = (aluno.nascimento.ano / 1000) * ((aluno.nascimento.ano % 1000) / 100);
 	chave[0][1] = (aluno.nascimento.mes / 10) * (aluno.nascimento.mes % 10);
 	chave[1][0] = (aluno.nascimento.dia / 10) * (aluno.nascimento.dia % 10);
-	chave[1][1] = ((aluno.nascimento.ano % 100) / 10) * (aluno.nascimento.ano % 10);
+	chave[1][1] = ((aluno.nascimento.ano % 100) / 10) * (aluno.nascimento.ano % 10);*/
 }
 
 void multiplicar(int matriz[DIMENSAO][DIMENSAO], char vet[], char resultado[]) {

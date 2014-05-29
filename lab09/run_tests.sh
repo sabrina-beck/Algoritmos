@@ -26,7 +26,7 @@ else
 	nomeLab=lab$1
 fi
 
-gcc -ansi -pedantic -Wall -Werror -o $nomeLab $nomeLab.c -lm
+gcc -ansi -pedantic -Wall -Werror -o $nomeLab.exe $nomeLab.c -lm
 
 if test $2 -gt 0; then
 	echo "Analise dos arquivos de saida"

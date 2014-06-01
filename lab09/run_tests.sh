@@ -39,7 +39,7 @@ do
 	else
 		nomeArq=arq$i
 	fi
-	./$nomeLab < $nomeArq.in > $nomeArq.out
+	./$nomeLab.exe < $nomeArq.in > $nomeArq.out
 	echo
 	echo "/*********** arq0$i.out : arq0$i.res ***********/"
 	diff $nomeArq.out $nomeArq.res

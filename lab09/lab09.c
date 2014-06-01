@@ -146,41 +146,26 @@ void gerarChave(Aluno aluno, int chave[DIMENSAO][DIMENSAO]) {
 	chave[0][1] = aluno.nascimento.mes;
 	chave[1][0] = aluno.nascimento.dia;
 	chave[1][1] = aluno.nascimento.ano % 100;
-/*	chave[0][0] = (aluno.nascimento.ano / 1000) * ((aluno.nascimento.ano % 1000) / 100);
-	chave[0][1] = (aluno.nascimento.mes / 10) * (aluno.nascimento.mes % 10);
-	chave[1][0] = (aluno.nascimento.dia / 10) * (aluno.nascimento.dia % 10);
-	chave[1][1] = ((aluno.nascimento.ano % 100) / 10) * (aluno.nascimento.ano % 10);*/
 }
 
-void multiplicar(int matriz[DIMENSAO][DIMENSAO], char vet[], char resultado[]) {
-	resultado[0] = (matriz[0][0] * vet[0]) + (matriz[0][1] * vet[1]);
-	resultado[1] = (matriz[1][0] * vet[0]) + (matriz[1][1] * vet[1]);
-}
-
-void adequarAoAlfabeto(char resultado[], int tam){
-	int i;
-	for(i = 0; i < tam; i++)
-		resultado[i] %= 127;
-}
-
-void hill(char c1, char c2, char resultado[], int chave[DIMENSAO][DIMENSAO]) {
-	char par[DIMENSAO];
-	par[0] = c1;
-	par[1] = c2;
-	multiplicar(chave, par, resultado);
-	adequarAoAlfabeto(resultado, DIMENSAO);
+void aplicarFiltro(int matriz[DIMENSAO][DIMENSAO], char c1, char c2, char resultado[]) {
+	resultado[0] = ((matriz[0][0] * (int) c1) + (matriz[0][1] * (int) c2)) % 127;
+	resultado[1] = ((matriz[1][0] * (int) c1) + (matriz[1][1] * (int) c2)) % 127;
 }
 
 void criptografar(char string[], int chave[DIMENSAO][DIMENSAO]) {
 	int i;
 	char resultado[2];
 	for(i = 0; string[i] && string[i + 1]; i += 2) {
-		hill(string[i], string[i + 1], resultado, chave);
+		aplicarFiltro(chave, string[i], string[i + 1], resultado);
 		string[i] = resultado[0];
 		string[i + 1] = resultado[1];
 	}
 
 	if(string[i] && !string[i + 1]){
-		hill(string[i], ' ', resultado, chave);
+		aplicarFiltro(chave, string[i], ' ', resultado);
+		string[i] = resultado[0];
+		string[i + 1] = resultado[1];
+		string[i + 2] = '\0';
 	}
 }

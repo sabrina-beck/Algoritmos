@@ -169,3 +169,28 @@ void criptografar(char string[], int chave[DIMENSAO][DIMENSAO]) {
 		string[i + 2] = '\0';
 	}
 }
+
+int inversoMultiplicativo(int d) {
+	/* (d * x) mod 127 = 1 */
+	return 0;
+}
+
+int determinante(int matriz[DIMENSAO][DIMENSAO]) {
+	return (matriz[0][0] * matriz[1][1]) - (matriz[0][1] * matriz[1][0]);
+}
+
+void descriptografar(char string[], int chave[DIMENSAO][DIMENSAO]) {
+	int i;
+	for(i = 0; string[i] && string[i + 1]; i += 2) {
+		int inversaModulo127[DIMENSAO][DIMENSAO];
+		int d_1 = inversoMultiplicativo(determinante(chave));
+		
+		inversaModulo127[0][0] = chave[1][1];
+		inversaModulo127[0][1] = -chave[0][1];
+		inversaModulo127[1][0] = -chave[1][0];
+		inversaModulo127[1][1] = chave[0][0];
+
+		
+	}
+
+}

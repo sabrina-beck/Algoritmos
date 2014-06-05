@@ -115,7 +115,7 @@ void escreverMatriz(char **matriz, int n) {
  * no tabuleiro sem que uma possa atacar a outra
  */
 /* TODO */
-int calculaNumeroMaximoDeTorres(char **tabuleiro, int n, int linhaInicial, int colunaInicial) {
+int calculaNumeroMaximoDeTorres(char **tabuleiro, int n) {
 	return 0;
 }
 

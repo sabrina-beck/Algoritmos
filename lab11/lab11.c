@@ -38,6 +38,7 @@ struct Aluno {
 typedef struct Aluno Aluno;
 
 /* Funções (Declaração) */
+void desalocarAlunos(Aluno alunos[], int n);
 void lerAlunos(Aluno alunos[], int n);
 Aluno lerAluno(int n);
 Data lerData();
@@ -75,10 +76,21 @@ int main() {
 	escreverAluno(alunos[s]);
 
 	/* Desaloca o vetor de alunos */
-	/* TODO free nos seguidores */
-	free(alunos);
+	desalocarAlunos(alunos, n);
 
 	return 0;
+}
+
+/* Funções (Implementação) */
+
+/*
+ * Desaloca vetores alocados no cadastro de alunos
+ */
+void desalocarAlunos(Aluno alunos[], int n) {
+	int i;
+	for(i = 0; i < n; i++)
+		free(alunos[i].seguidores);
+	free(alunos);
 }
 
 /*

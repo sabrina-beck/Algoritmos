@@ -2,6 +2,12 @@
 #include <stdlib.h>
 
 #define TAMANHO_MAXIMO_DO_NOME 71
+#define D 0.85
+#define ETAPAS 10
+#define DIA 19
+#define MES 6
+#define ANO 2014
+/* D é o damping factor usado pelo instituto Never Forever Alone */
 
 /* Structs e Enums */
 enum bool {
@@ -36,18 +42,23 @@ void lerAlunos(Aluno alunos[], int n);
 Aluno lerAluno(int n);
 Data lerData();
 int* lerSeguidores(int n, int *qtdSeguidores);
+float popularidade(int t, Aluno aluno);
+int quantidadeDePessoasQueSegue(int seguidor);
+int idade(Data nascimento);
+bool jaPassou(Data data);
 void escreverAlunos(Aluno alunos[], int n); /* FIXME [TRASH] */
 void escreverAluno(Aluno aluno); /* FIXME [TRASH] */
 void escreverData(Data data); /* FIXME [TRASH] */
 void escreverSeguidores(int seguidores[], int qtd); /* FIXME [TRASH] */
 
 /* Variáveis globais */
+int n; /* quantidade de alunos a serem cadastrados */
+Aluno *alunos;
+int s; /* indice do aluno cuja popularidade é requisitada */
 
 /* Programa Principal */
 int main() {
-	int n; /* quantidade de alunos a serem cadastrados */
-	Aluno *alunos;
-	int s; /* indice do aluno cuja popularidade é requisitada */
+	int i;
 
 	/* Lê a quantidade de alunos a serem cadastrados */
 	scanf("%d ", &n);
@@ -63,6 +74,24 @@ int main() {
 	/* Lê o indice do aluno cuja popularidade é requisitada */
 	scanf("%d ", &s);
 	s--;
+
+	/* Escreve o nome e a popularidade do aluno desejado */
+	printf("%s ( %f )\n", alunos[s].nome, popularidade(ETAPAS, alunos[s]));
+	
+	/* Escreve o RA do aluno */
+	printf("%d\n", alunos[s].ra);
+
+	/* Escreve o genero do aluno */
+	printf("%c\n", alunos[s].genero);
+
+	/* Escreve a idade do aluno */
+	printf("%d anos\n", idade(alunos[s].nascimento));
+
+	printf("Seguidores: \n");
+
+	for(i = 0; i < alunos[s].qtdSeguidores; i++)
+		printf("\t%s\n", alunos[alunos[s].seguidores[i]].nome);
+	
 
 	/* FIXME [TRASH] verificação da entrada */
 	/*printf("%d\n", n);
@@ -146,6 +175,54 @@ int* lerSeguidores(int n, int *qtdSeguidores) {
 		aux[i] = seguidores[i] - 1; /* guarda o índice dos seguidores */
 	free(seguidores);
 	return aux;
+}
+
+/*
+ * Calcula a popularidade de um aluno
+ */
+float popularidade(int t, Aluno aluno) {
+	int i, pop = 0;
+	if(t == 0)
+		return (float) 1/n;
+
+	for(i = 0; i < aluno.qtdSeguidores; i++)
+		pop += popularidade(t - 1, alunos[aluno.seguidores[i]])
+					 / quantidadeDePessoasQueSegue(aluno.seguidores[i]);
+	pop *= D;
+	pop += (1 - D) / n;
+	
+	return pop;
+}
+
+/*
+ * Calcula a quantidade de pessoas seguidas por um aluno
+ */
+int quantidadeDePessoasQueSegue(int seguidor) {
+	int i, j, qtd = 0;
+	for(i = 0; i < n; i++)
+		for(j = 0; j < alunos[i].qtdSeguidores; j++)
+			if(alunos[i].seguidores[j] == seguidor) {
+				qtd++;
+				break;
+			}
+	return qtd;
+}
+
+/*
+ * Dada uma data de nascimento, calcula a idade da pessoa
+ */
+int idade(Data nascimento) {
+	int idade = ANO - nascimento.ano;
+	if(!jaPassou(nascimento))
+		idade--;
+	return idade;
+}
+
+/*
+ * Verifica se a data já passou
+ */
+bool jaPassou(Data data) {
+	return MES > data.mes || (MES == data.mes && DIA >= data.dia);
 }
 
 /*

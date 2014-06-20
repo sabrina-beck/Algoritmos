@@ -1,6 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/*
+ * Nome: Sabrina Beck Angelini
+ * RA: 157240
+ * Descrição: Calcula a popularidade de um determinado aluno cujos dados
+ * estão presentes no cadastro de alunos fornecido.
+ */
+
 #define TAMANHO_MAXIMO_DO_NOME 71
 #define D 0.85
 #define ETAPAS 10

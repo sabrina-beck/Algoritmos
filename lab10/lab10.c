@@ -26,8 +26,6 @@ typedef enum bool bool;
 /********************** DECLARAÇÔES DE FUNÇÔES **********************/
 char** alocar(int n);
 int** alocarI(int n);
-void desalocar(char** matriz, int n);
-void desalocarI(int** matriz, int n);
 void lerMatriz(char **matriz, int n);
 void configuracoesPossiveis(int x, int y, char **tabuleiro, int n);
 bool validaTorre(char **tabuleiro, int n, int x, int y);
@@ -91,6 +89,9 @@ char** alocar(int n) {
 	return matriz;
 }
 
+/*
+ * Aloca uma matriz quadrada de int de dimensão nxn
+ */
 int** alocarI(int n) {
 	int i;
 	int **matriz = (int**) malloc(n * sizeof(char));
@@ -157,7 +158,6 @@ void configuracoesPossiveis(int x, int y, char **tabuleiro, int n) {
 	for(i = 0; i < QTD_DIRECOES; i++) {
 		configuracoesPossiveis(x + direcoes[i][0], 
 					y + direcoes[i][1], tabuleiro, n);
-		/*printf("[DEBUG]maior: %d, x; %d, y: %d\n", maior, x, y);*/
 
 	}
 

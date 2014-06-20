@@ -3,6 +3,9 @@
 
 #define CASA_VAZIA '.'
 #define PAREDE 'X'
+#define TORRE 'T'
+#define QTD_DIRECOES 4
+
 
 /*
  * Nome: Sabrina Beck Angelini
@@ -22,46 +25,59 @@ typedef enum bool bool;
 
 /********************** DECLARAÇÔES DE FUNÇÔES **********************/
 char** alocar(int n);
+int** alocarI(int n);
 void desalocar(char** matriz, int n);
+void desalocarI(int** matriz, int n);
 void lerMatriz(char **matriz, int n);
-void escreverMatriz(char **matriz, int n); /* FIXME TIRAR ISSO */
-int calculaNumeroMaximoDeTorres(char **tabuleiro, int n);
-bool validaTorres(char **tabuleiro, int n);
+void configuracoesPossiveis(int x, int y, char **tabuleiro, int n);
+bool validaTorre(char **tabuleiro, int n, int x, int y);
+int quantidadeDeTorres(char **tabuleiro, int n);
+void zerarMatriz(int **mat, int n);
+
+int direcoes[QTD_DIRECOES][2] = { {1, 0}, {0, 1}, {-1, 0}, {0, -1} };
+int maior = 0;
+int **aux; /* matriz que armazena as posições do tabuleiro que já foram visitadas */
 
 int main() {
-	int n; /* tamanho do tabuleiro */
+	int n, i, j; /* tamanho do tabuleiro */
 	char **tabuleiro;
-	int numeroMaximoDeTorres;
 
 	/* Lê o tamanho do tabuleiro */
 	scanf("%d ", &n);
 
 	/* Aloca uma matriz para o tabuleiro */
 	tabuleiro = alocar(n);
+	aux = alocarI(n);
 
 	/* Lê o tabuleiro */
 	lerMatriz(tabuleiro, n);
 
-	/* FIXME: escreve o tabuleiro --> TIRAR ISSO */
-	/*escreverMatriz(tabuleiro, n);*/
+	zerarMatriz(aux, n);
 
 	/*
 	 * Calcula o numero maximo de torres possíveis de se colocar
 	 * no tabuleiro sem que uma possa atacar a outra
 	 */
-	numeroMaximoDeTorres = calculaNumeroMaximoDeTorres(tabuleiro, n);
+	for(i = 0; i < n; i++)
+		for(j = 0; j < n; j++){
+			configuracoesPossiveis(i, j, tabuleiro, n);
+			zerarMatriz(aux, n);
+		}
 
 	/*
 	 * Escreve o numero maximo de torres possíveis de se colocar
 	 * no tabuleiro sem que uma possa atacar a outra
 	 */
-	printf("%d", numeroMaximoDeTorres);
-
-	/* Desaloca a matriz do tabuleiro */
-	/* FIXME desalocar nao esta funcionando */
-	/*desalocar(tabuleiro, n);*/
+	printf("%d\n", maior);
 
 	return 0;
+}
+
+void zerarMatriz(int **mat, int n) {
+	int i, j;
+	for(i = 0; i < n; i++)
+		for(j = 0; j < n; j++)
+			mat[i][j] = 0;
 }
 
 /*
@@ -75,15 +91,12 @@ char** alocar(int n) {
 	return matriz;
 }
 
-/*
- * Desaloca uma matriz quadrada de char de dimensao nxn
- */
-/* FIXME desalocar nao esta funcionando */
-void desalocar(char** matriz, int n) {
+int** alocarI(int n) {
 	int i;
-	for (i = 0; i < n; i++)
-		free(matriz[i]);
-	free(matriz);
+	int **matriz = (int**) malloc(n * sizeof(char));
+	for(i = 0; i < n; i++)
+		matriz[i] = malloc(n * sizeof(char));
+	return matriz;
 }
 
 /*
@@ -99,30 +112,99 @@ void lerMatriz(char **matriz, int n) {
 }
 
 /*
- * FIXME: Escreve uma matriz quadrada de dimensao nxn --> TIRAR ISSO
+ * Marca que o algoritimo já passou por determinada posição do tabuleiro
  */
-void escreverMatriz(char **matriz, int n) {
-	int i, j;
-	for(i = 0; i < n; i++) {
-		for(j = 0; j < n; j++)
-			printf("%c", matriz[i][j]);
-		printf("\n");
-	}
+void passouPor(int x, int y) {
+	aux[x][y]++;
+}
+
+/*
+ * Verifica se o algoritimo já passou por determinada posição do tabuleiro
+ */
+bool jaPassouPor(int x, int y, int n) {
+	return aux[x][y] > 0;
 }
 
 /*
  * Calcula o numero maximo de torres possíveis de se colocar
  * no tabuleiro sem que uma possa atacar a outra
  */
-/* TODO */
-int calculaNumeroMaximoDeTorres(char **tabuleiro, int n) {
-	return 0;
+void configuracoesPossiveis(int x, int y, char **tabuleiro, int n) {
+	int i;
+	/* Caso de parada é quando ultrapassa os limites da matriz */
+	if(x >= n || y >= n || x < 0 || y < 0 || jaPassouPor(x, y, n)) {
+		int qtdTorres = quantidadeDeTorres(tabuleiro, n);
+		if(qtdTorres > maior)
+			maior = qtdTorres;
+
+		return;
+	}
+
+	passouPor(x, y);
+
+	/*
+	 * Se a casa atual é uma casa vazia e uma posição válida para a torre,
+	 * uma torre é colocada nessa posição
+	 */
+	if(tabuleiro[x][y] == CASA_VAZIA && validaTorre(tabuleiro, n, x, y)) {
+		tabuleiro[x][y] = TORRE;
+	}
+
+	/*
+	 * Calcula todas as possíveis configurações de torres no tabuleiro,
+	 * armazenando a maior quantidade de torres
+	 */
+	for(i = 0; i < QTD_DIRECOES; i++) {
+		configuracoesPossiveis(x + direcoes[i][0], 
+					y + direcoes[i][1], tabuleiro, n);
+		/*printf("[DEBUG]maior: %d, x; %d, y: %d\n", maior, x, y);*/
+
+	}
+
+	/*
+	 * Caso uma torre tenha sido colocada no tabuleiro,
+	 * a mesma é retirada para testar outras configurações
+	 */
+	if(tabuleiro[x][y] == TORRE)
+		tabuleiro[x][y] = CASA_VAZIA;
+
 }
 
 /*
  * Verifica se as torres posicionadas não podem se atacar
  */
-/* TODO */
-bool validaTorres(char **tabuleiro, int n) {
-	return false;	
+bool validaTorre(char **tabuleiro, int n, int x, int y) {
+	int i;
+
+	/* Verifica a linha da torre */
+	for(i = x - 1; i >= 0 && tabuleiro[i][y] != PAREDE; i--)
+		if(tabuleiro[i][y] == TORRE)
+			return false;
+
+	for(i = x + 1; i < n && tabuleiro[i][y] != PAREDE; i++)
+		if(tabuleiro[i][y] == TORRE)
+			return false;
+
+	/* Verifica a coluna da torre */
+	for(i = y - 1; i >= 0 && tabuleiro[x][i] != PAREDE; i--)
+		if(tabuleiro[x][i] == TORRE)
+			return false;
+
+	for(i = y + 1; i < n && tabuleiro[x][i] != PAREDE; i++)
+		if(tabuleiro[x][i] == TORRE)
+			return false;
+
+	return true;
+}
+
+/*
+ * Calcula a quantidade de torres no tabuleiro
+ */
+int quantidadeDeTorres(char **tabuleiro, int n) {
+	int i, j, cont = 0;
+	for(i = 0; i < n; i++)
+		for(j = 0; j < n; j++)
+			if(tabuleiro[i][j] == TORRE)
+				cont++;
+	return cont;
 }

@@ -46,10 +46,8 @@ float popularidade(int t, Aluno aluno);
 int quantidadeDePessoasQueSegue(int seguidor);
 int idade(Data nascimento);
 bool jaPassou(Data data);
-void escreverAlunos(Aluno alunos[], int n); /* FIXME [TRASH] */
-void escreverAluno(Aluno aluno); /* FIXME [TRASH] */
-void escreverData(Data data); /* FIXME [TRASH] */
-void escreverSeguidores(int seguidores[], int qtd); /* FIXME [TRASH] */
+void escreverAluno(Aluno aluno);
+void escreverSeguidores(Aluno aluno);
 
 /* Variáveis globais */
 int n; /* quantidade de alunos a serem cadastrados */
@@ -58,8 +56,6 @@ int s; /* indice do aluno cuja popularidade é requisitada */
 
 /* Programa Principal */
 int main() {
-	int i;
-
 	/* Lê a quantidade de alunos a serem cadastrados */
 	scanf("%d ", &n);
 
@@ -75,28 +71,8 @@ int main() {
 	scanf("%d ", &s);
 	s--;
 
-	/* Escreve o nome e a popularidade do aluno desejado */
-	printf("%s ( %f )\n", alunos[s].nome, popularidade(ETAPAS, alunos[s]));
-	
-	/* Escreve o RA do aluno */
-	printf("%d\n", alunos[s].ra);
-
-	/* Escreve o genero do aluno */
-	printf("%c\n", alunos[s].genero);
-
-	/* Escreve a idade do aluno */
-	printf("%d anos\n", idade(alunos[s].nascimento));
-
-	printf("Seguidores: \n");
-
-	for(i = 0; i < alunos[s].qtdSeguidores; i++)
-		printf("\t%s\n", alunos[alunos[s].seguidores[i]].nome);
-	
-
-	/* FIXME [TRASH] verificação da entrada */
-	/*printf("%d\n", n);
-	escreverAlunos(alunos, n);
-	printf("\n%d\n", s+1);*/
+	/* Escreve dados do aluno desejado relacionados a sua popularidade */
+	escreverAluno(alunos[s]);
 
 	/* Desaloca o vetor de alunos */
 	/* TODO free nos seguidores */
@@ -227,39 +203,35 @@ bool jaPassou(Data data) {
 }
 
 /*
- * FIXME [TRASH]
- */
-void escreverAlunos(Aluno alunos[], int n){
-	int j;
-	for(j = 0; j < n; j++)
-		escreverAluno(alunos[j]);
-}
-
-/*
- * FIXME [TRASH]
+ * Escreve dados do aluno desejado
  */
 void escreverAluno(Aluno aluno) {
-	printf("%s\n", aluno.nome);
+	/* Escreve o nome e a popularidade do aluno desejado */
+	printf("%s ( %f )\n", aluno.nome, popularidade(ETAPAS, aluno));
+	
+	/* Escreve o RA do aluno */
 	printf("%d\n", aluno.ra);
+
+	/* Escreve o genero do aluno */
 	printf("%c\n", aluno.genero);
-	escreverData(aluno.nascimento);
-	printf("%c\n", aluno.generoQueProcura);
-	escreverSeguidores(aluno.seguidores, aluno.qtdSeguidores);
+
+	/* Escreve a idade do aluno */
+	printf("%d anos\n", idade(aluno.nascimento));
+
+	/* Escreve os seguidores do aluno */
+	escreverSeguidores(aluno);
+	
+
 }
 
 /*
- * FIXME [TRASH]
+ * Escreve os seguidores do aluno desejado
  */
-void escreverData(Data data) {
-	printf("%2hu/%2hu/%4hu\n", data.dia, data.mes, data.ano);
-}
-
-/*
- * FIXME [TRASH]
- */
-void escreverSeguidores(int seguidores[], int qtd) {
+void escreverSeguidores(Aluno aluno) {
 	int i;
-	for(i = 0; i < qtd; i++)
-		printf("%d ", seguidores[i] + 1);
-	printf("0\n");
+	printf("Seguidores: \n");
+
+	for(i = 0; i < alunos[s].qtdSeguidores; i++)
+		printf("\t%s\n", alunos[aluno.seguidores[i]].nome);
+
 }

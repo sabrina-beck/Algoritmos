@@ -181,7 +181,8 @@ int* lerSeguidores(int n, int *qtdSeguidores) {
  * Calcula a popularidade de um aluno
  */
 float popularidade(int t, Aluno aluno) {
-	int i, pop = 0;
+	int i;
+	float pop = 0.0;
 	if(t == 0)
 		return (float) 1/n;
 

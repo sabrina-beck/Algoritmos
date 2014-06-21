@@ -8,7 +8,7 @@
  * estão presentes no cadastro de alunos fornecido.
  */
 
-#define TAMANHO_MAXIMO_DO_NOME 71
+#define TAMANHO_MAXIMO_DO_NOME 101
 #define D 0.85
 #define ETAPAS 10
 #define DIA 19

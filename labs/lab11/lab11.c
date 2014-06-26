@@ -50,7 +50,7 @@ void lerAlunos(Aluno alunos[], int n);
 Aluno lerAluno(int n);
 Data lerData();
 int* lerSeguidores(int n, int *qtdSeguidores);
-float popularidade(int t, Aluno aluno);
+double popularidade(int t, Aluno aluno);
 int quantidadeDePessoasQueSegue(int seguidor);
 int idade(Data nascimento);
 bool jaPassou(Data data);
@@ -175,11 +175,11 @@ int* lerSeguidores(int n, int *qtdSeguidores) {
 /*
  * Calcula a popularidade de um aluno
  */
-float popularidade(int t, Aluno aluno) {
+double popularidade(int t, Aluno aluno) {
 	int i;
-	float pop = 0.0;
+	double pop = 0.0;
 	if(t == 0)
-		return (float) 1/n;
+		return (double) 1/n;
 
 	for(i = 0; i < aluno.qtdSeguidores; i++)
 		pop += popularidade(t - 1, alunos[aluno.seguidores[i]])
